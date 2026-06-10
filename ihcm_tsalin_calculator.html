@@ -3,515 +3,301 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IHCM — Гадаад ажилтны цалингийн тооцоолуур</title>
+<title>IHCM — Ажилтны зардлын тооцоо</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #0f1923;
-    color: #e8edf2;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 32px 16px 48px;
-  }
-
-  .logo-bar {
-    width: 100%;
-    max-width: 820px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
-  }
-  .logo-box {
-    background: #c8a94a;
-    border-radius: 10px;
-    padding: 8px 16px;
-    font-size: 20px;
-    font-weight: 700;
-    color: #0f1923;
-    letter-spacing: 1px;
-  }
-  .logo-sub {
-    font-size: 13px;
-    color: #8a9baa;
-    line-height: 1.4;
-  }
-  .logo-sub strong { color: #c8a94a; display: block; font-size: 15px; }
-
-  h1 {
-    font-size: 22px;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 6px;
-    width: 100%;
-    max-width: 820px;
-  }
-  .subtitle {
-    font-size: 13px;
-    color: #6a7f90;
-    margin-bottom: 24px;
-    width: 100%;
-    max-width: 820px;
-  }
-
-  .main-grid {
-    width: 100%;
-    max-width: 820px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .panel {
-    background: #1a2535;
-    border: 1px solid #253040;
-    border-radius: 14px;
-    padding: 20px 22px;
-  }
-  .panel-full { grid-column: 1 / -1; }
-
-  .panel-title {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #c8a94a;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .panel-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #253040;
-  }
-
-  .field { margin-bottom: 14px; }
-  .field label {
-    display: block;
-    font-size: 12px;
-    color: #7a8fa0;
-    margin-bottom: 5px;
-  }
-  .field input, .field select {
-    width: 100%;
-    padding: 9px 12px;
-    background: #0f1923;
-    border: 1px solid #2e4055;
-    border-radius: 8px;
-    color: #e8edf2;
-    font-size: 15px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color .15s;
-  }
-  .field input:focus, .field select:focus { border-color: #c8a94a; }
-
-  .usd-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .usd-row input { flex: 1; }
-  .arrow-icon {
-    font-size: 18px;
-    color: #c8a94a;
-    flex-shrink: 0;
-  }
-  .mnt-display {
-    flex: 1;
-    padding: 9px 12px;
-    background: #121e2c;
-    border: 1px solid #1e3048;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #c8a94a;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .rate-note {
-    font-size: 11px;
-    color: #4a6070;
-    margin-top: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .rate-note button {
-    font-size: 11px;
-    color: #c8a94a;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-decoration: underline;
-    padding: 0;
-  }
-
-  /* ND breakdown */
-  .nd-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .nd-table th {
-    font-size: 11px;
-    color: #5a7a90;
-    font-weight: 600;
-    text-align: right;
-    padding: 0 0 8px;
-  }
-  .nd-table th:first-child { text-align: left; }
-  .nd-table td {
-    padding: 5px 0;
-    border-bottom: 1px solid #1e3048;
-    text-align: right;
-  }
-  .nd-table td:first-child { text-align: left; color: #8a9baa; }
-  .nd-table tr:last-child td { border-bottom: none; }
-  .nd-table .subtotal td {
-    font-weight: 600;
-    color: #e07070;
-    border-top: 1px solid #2e4055;
-    padding-top: 8px;
-    border-bottom: none;
-  }
-
-  /* Result panel */
-  .result-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .metric {
-    background: #0f1923;
-    border-radius: 10px;
-    padding: 14px 16px;
-    text-align: center;
-  }
-  .metric-label { font-size: 11px; color: #5a7a90; margin-bottom: 6px; line-height: 1.3; }
-  .metric-val { font-size: 18px; font-weight: 700; }
-  .metric-val.green { color: #4ecb8a; }
-  .metric-val.red { color: #e07070; }
-  .metric-val.gold { color: #c8a94a; }
-  .metric-sub { font-size: 11px; color: #5a7a90; margin-top: 3px; }
-
-  .sum-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 7px 0;
-    border-bottom: 1px solid #1e3048;
-    font-size: 13px;
-  }
-  .sum-row:last-child { border-bottom: none; }
-  .sum-row .lbl { color: #7a8fa0; }
-  .sum-row .val { font-weight: 600; }
-  .sum-row.big { margin-top: 8px; padding-top: 12px; border-top: 1px solid #2e4055; border-bottom: none; }
-  .sum-row.big .lbl { font-size: 14px; color: #c8a94a; }
-  .sum-row.big .val { font-size: 16px; color: #4ecb8a; }
-
-  /* Advice box */
-  .advice {
-    margin-top: 16px;
-    background: #0f1923;
-    border-left: 3px solid #c8a94a;
-    border-radius: 0 8px 8px 0;
-    padding: 12px 14px;
-    font-size: 13px;
-    color: #8a9baa;
-    line-height: 1.6;
-  }
-  .advice strong { color: #c8a94a; display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
-
-  .toggle-row {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-  .toggle-btn {
-    padding: 6px 12px;
-    border-radius: 20px;
-    border: 1px solid #2e4055;
-    background: transparent;
-    color: #7a8fa0;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all .15s;
-    font-family: inherit;
-  }
-  .toggle-btn.active {
-    background: #c8a94a;
-    border-color: #c8a94a;
-    color: #0f1923;
-    font-weight: 600;
-  }
-
-  .footer {
-    margin-top: 24px;
-    font-size: 11px;
-    color: #3a5060;
-    text-align: center;
-    max-width: 820px;
-  }
-
-  @media (max-width: 600px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .panel-full { grid-column: 1; }
-    .result-grid { grid-template-columns: 1fr 1fr; }
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0f1923;color:#e8edf2;min-height:100vh;padding:28px 16px 48px;display:flex;flex-direction:column;align-items:center}
+.logo-bar{width:100%;max-width:820px;display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.logo-box{background:#c8a94a;border-radius:10px;padding:8px 16px;font-size:20px;font-weight:700;color:#0f1923;letter-spacing:1px}
+.logo-sub{font-size:13px;color:#8a9baa;line-height:1.4}
+.logo-sub strong{color:#c8a94a;display:block;font-size:15px}
+.doc-title{width:100%;max-width:820px;text-align:center;margin-bottom:6px}
+.doc-title h1{font-size:18px;font-weight:600;color:#fff;letter-spacing:.02em}
+.doc-subtitle{font-size:12px;color:#5a7a90;margin-bottom:20px;text-align:center;width:100%;max-width:820px}
+.grid{width:100%;max-width:820px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{background:#1a2535;border:1px solid #253040;border-radius:14px;padding:18px 20px}
+.panel-full{grid-column:1/-1}
+.pt{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#c8a94a;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.pt::after{content:'';flex:1;height:1px;background:#253040}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:#7a8fa0;margin-bottom:4px}
+.field input,.field select{width:100%;padding:8px 11px;background:#0f1923;border:1px solid #2e4055;border-radius:8px;color:#e8edf2;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus{border-color:#c8a94a}
+.usd-row{display:flex;align-items:center;gap:8px}
+.usd-row input{flex:1}
+.arr{color:#c8a94a;font-size:16px;flex-shrink:0}
+.mnt-show{flex:1;padding:8px 11px;background:#121e2c;border:1px solid #1e3048;border-radius:8px;font-size:13px;color:#c8a94a;font-weight:600;white-space:nowrap}
+.rate-note{font-size:11px;color:#4a6070;margin-top:4px;display:flex;justify-content:space-between}
+.rate-note button{font-size:11px;color:#c8a94a;background:none;border:none;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-size:11px;color:#5a7a90;font-weight:600;text-align:right;padding:0 0 8px;border-bottom:1px solid #253040}
+.tbl th:first-child{text-align:left}
+.tbl td{padding:6px 0;border-bottom:1px solid #1e3048;text-align:right}
+.tbl td:first-child{text-align:left;color:#8a9baa;padding-right:8px}
+.tbl tr.sub td{border-top:1px solid #2e4055;font-weight:600;color:#c8a94a;border-bottom:none;padding-top:8px}
+.note{font-size:11px;color:#4a6070;margin-top:8px;line-height:1.5}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.met{background:#0f1923;border-radius:10px;padding:12px 14px;text-align:center}
+.met-lbl{font-size:11px;color:#5a7a90;margin-bottom:5px;line-height:1.3}
+.met-val{font-size:17px;font-weight:700}
+.met-val.g{color:#4ecb8a}
+.met-val.r{color:#e07070}
+.met-val.gold{color:#c8a94a}
+.met-sub{font-size:11px;color:#5a7a90;margin-top:2px}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1e3048;font-size:13px}
+.sum-row:last-child{border-bottom:none}
+.sum-row .l{color:#7a8fa0}
+.sum-row .v{font-weight:600}
+.sum-row.big{margin-top:10px;padding-top:10px;border-top:1px solid #2e4055;border-bottom:none}
+.sum-row.big .l{font-size:13px;color:#c8a94a}
+.sum-row.big .v{font-size:15px;color:#4ecb8a}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.pay-card{background:#0f1923;border-radius:10px;padding:12px 14px}
+.pay-lbl{font-size:11px;color:#5a7a90;margin-bottom:5px}
+.pay-val{font-size:15px;font-weight:700;color:#c8a94a}
+.pay-sub{font-size:11px;color:#4a6070;margin-top:3px}
+.abt-box{background:#12263a;border:1px solid #1e4060;border-radius:10px;padding:14px 16px}
+.abt-title{font-size:12px;font-weight:600;color:#4a9fd4;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.abt-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #1e3a4a}
+.abt-row:last-child{border-bottom:none;font-weight:600}
+.abt-row .l{color:#7a9aaa}
+.advice{margin-top:14px;background:#0f1923;border-left:3px solid #c8a94a;border-radius:0 8px 8px 0;padding:11px 14px;font-size:12px;color:#8a9baa;line-height:1.6}
+.advice strong{color:#c8a94a;display:block;margin-bottom:3px;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+ 
+/* Editable service fee row */
+.svc-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.svc-label{font-size:13px;color:#8a9baa;flex:1}
+.svc-input{width:90px;padding:5px 8px;background:#0f1923;border:1px solid #c8a94a;border-radius:6px;color:#c8a94a;font-size:13px;font-weight:600;font-family:inherit;text-align:right;outline:none}
+.svc-mnt{font-size:13px;color:#e8edf2;min-width:90px;text-align:right;font-weight:600}
+ 
+.footer{margin-top:22px;font-size:11px;color:#3a5060;text-align:center;max-width:820px}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr}
+  .panel-full{grid-column:1}
+  .metrics{grid-template-columns:1fr 1fr}
+  .pay-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-
+ 
 <div class="logo-bar">
   <div class="logo-box">IHCM</div>
-  <div class="logo-sub">
-    <strong>International Human Capital Management</strong>
-    Гадаад ажилтны цалингийн тооцоолуур
+  <div class="logo-sub"><strong>Infinity Human Capital Management Mongolia</strong>Гадаад ажилтны зардлын тооцоо</div>
+</div>
+<div class="doc-title"><h1>АЖИЛТНЫ ЗАРДЛЫН ТООЦОО</h1></div>
+<div class="doc-subtitle">Байгууллага болон ажилтны цалин, НДШ, ХХОАТ, үйлчилгээний хөлсний бүрэн тооцоолуур</div>
+ 
+<div class="grid">
+ 
+<!-- Үндсэн мэдээлэл -->
+<div class="panel">
+  <div class="pt">Үндсэн мэдээлэл</div>
+  <div class="field">
+    <label>Байгууллагын нэр</label>
+    <input type="text" id="company" placeholder="Байгууллагын нэр...">
+  </div>
+  <div class="field">
+    <label>Орон тоо (ажилтны тоо)</label>
+    <input type="number" id="headcount" value="1" min="1">
+  </div>
+  <div class="field">
+    <label>Сарын цалин (USD)</label>
+    <div class="usd-row">
+      <input type="number" id="usd" value="450" min="0" step="10">
+      <span class="arr">→</span>
+      <div class="mnt-show" id="mnt-show">—</div>
+    </div>
+    <div class="rate-note">
+      <span>1 USD = <span id="rate-disp">3,567</span> ₮</span>
+      <button onclick="toggleRate()">Ханш өөрчлөх</button>
+    </div>
+    <div id="rate-row" style="display:none;margin-top:6px">
+      <input type="number" id="rate" value="3567" min="1" style="width:100%;padding:7px 10px;background:#0f1923;border:1px solid #c8a94a;border-radius:6px;color:#c8a94a;font-size:13px;font-family:inherit">
+    </div>
+  </div>
+  <div class="field">
+    <label>Ажилтны иргэншил</label>
+    <select id="emptype">
+      <option value="foreign">Гадаад иргэн</option>
+      <option value="local">Монгол иргэн</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Ажлын байрны нөхцөл</label>
+    <select id="worktype">
+      <option value="normal">Энгийн</option>
+      <option value="hazard">Хортой / хүнд</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Гэрээний хугацаа</label>
+    <select id="contract">
+      <option value="24">24 сар (2 жил)</option>
+      <option value="12">12 сар (1 жил)</option>
+      <option value="36">36 сар (3 жил)</option>
+    </select>
   </div>
 </div>
-
-<h1>Цалингийн дэлгэрэнгүй тооцоолуур</h1>
-<p class="subtitle">Ажил олгогчтой уулзалтын үед шууд тооцоолж харуулах хэрэгсэл</p>
-
-<div class="main-grid">
-
-  <!-- Input panel -->
-  <div class="panel">
-    <div class="panel-title">Оролтын мэдээлэл</div>
-
-    <div class="field">
-      <label>Цалингийн хэмжээ</label>
-      <div class="usd-row">
-        <input type="number" id="usd" value="450" min="0" placeholder="USD">
-        <span class="arrow-icon">→</span>
-        <div class="mnt-display" id="mnt-show">—</div>
-      </div>
-      <div class="rate-note">
-        <span>1 USD = <span id="rate-disp">3,550</span> MNT</span>
-        <button onclick="toggleRateEdit()">Ханш өөрчлөх</button>
-      </div>
-      <div id="rate-edit-row" style="display:none; margin-top:6px;">
-        <input type="number" id="rate" value="3550" min="1" style="width:100%; padding:7px 10px; background:#0f1923; border:1px solid #c8a94a; border-radius:6px; color:#c8a94a; font-size:13px; font-family:inherit;">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Ажилтны иргэншил</label>
-      <select id="emptype">
-        <option value="foreign">Гадаад иргэн</option>
-        <option value="local">Монгол иргэн</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>Ажлын байрны нөхцөл</label>
-      <div class="toggle-row">
-        <button class="toggle-btn active" onclick="setWork('normal',this)">Энгийн</button>
-        <button class="toggle-btn" onclick="setWork('hazard',this)">Хортой / хүнд</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Цалин оруулах хэлбэр</label>
-      <div class="toggle-row">
-        <button class="toggle-btn active" onclick="setMode('gross',this)">Gross (бодит)</button>
-        <button class="toggle-btn" onclick="setMode('net',this)">Net (гарт)</button>
-      </div>
-    </div>
-
+ 
+<!-- Нэг удаагийн зардал -->
+<div class="panel">
+  <div class="pt">Нэг удаагийн зардал</div>
+ 
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th style="text-align:left">Зардлын төрөл</th>
+        <th>USD/ажилтан</th>
+        <th>Нийт төгрөг</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="svc-row">
+            <span class="svc-label">Үйлчилгээний хөлс + нислэг</span>
+          </div>
+        </td>
+        <td>
+          <input class="svc-input" type="number" id="svc-usd" value="1200" min="0" step="10">
+        </td>
+        <td class="svc-mnt" id="svc-mnt-val">—</td>
+      </tr>
+      <tr class="sub">
+        <td>Нийт нэг удаагийн зардал</td>
+        <td id="onetime-usd-total">—</td>
+        <td id="onetime-mnt-total">—</td>
+      </tr>
+    </tbody>
+  </table>
+ 
+  <div class="note">Үйлчилгээний хөлс нь Улаанбаатар хүртэлх 1 талын нислэгийн зардал багтсан. Тохиролцооны дагуу өөрчлөгдөж болно.</div>
+ 
+  <div class="pay-grid" id="pay-grid"></div>
+ 
+  <div class="note" style="margin-top:10px">
+    <b style="color:#c8a94a">Төлбөрийн хуваарь:</b> Гэрээний урьдчилгаа 50% + Визны зөвшөөрөл гарах үед 50%
   </div>
-
-  <!-- ND panel -->
-  <div class="panel">
-    <div class="panel-title">НДШ задаргаа</div>
-    <table class="nd-table">
-      <thead>
-        <tr>
-          <th>Төрөл</th>
-          <th>Ажилтан</th>
-          <th>Ажил олгогч</th>
-        </tr>
-      </thead>
-      <tbody id="nd-body"></tbody>
-    </table>
-  </div>
-
-  <!-- Result panel -->
-  <div class="panel panel-full">
-    <div class="panel-title">Эцсийн дүн</div>
-
-    <div class="result-grid">
-      <div class="metric">
-        <div class="metric-label">Гарт олгох цалин</div>
-        <div class="metric-val green" id="r-net">—</div>
-        <div class="metric-sub" id="r-net-usd">—</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Ажилтнаас суутгах нийт</div>
-        <div class="metric-val red" id="r-emp-total">—</div>
-        <div class="metric-sub" id="r-emp-pct">—</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Ажил олгогчийн нийт зардал</div>
-        <div class="metric-val gold" id="r-er-cost">—</div>
-        <div class="metric-sub" id="r-er-usd">—</div>
-      </div>
-    </div>
-
-    <div id="sum-detail"></div>
-
-    <div class="advice" id="advice-box"></div>
-  </div>
-
 </div>
-
-<div class="footer">
-  IHCM Mongolia · Дотоод хэрэгцээнд зориулсан тооцоолуур · НДШ: ХН-ийн яамны журам 2024 · ХОТ: Татварын хуулийн 23.1 зүйл
+ 
+<!-- АБТ -->
+<div class="panel">
+  <div class="pt">АБТ хөнгөлөлт (Ажиллах Байрны Татаалт)</div>
+  <div class="abt-box">
+    <div class="abt-title">АБТ 50% хөнгөлөлт</div>
+    <div id="abt-rows"></div>
+  </div>
+  <div class="note" style="margin-top:10px">Энэхүү 50%-ийн хөнгөлөлтөд хамрагдах дэмжих бичгийг салбарын яамнаас авах бөгөөд шаардлагатай материал бүрдүүлэлтийн талаарх заавар зөвлөмжийг өгч, IHCM хамтран хариуцан ажиллана.</div>
 </div>
-
+ 
+<!-- Сарын зардал -->
+<div class="panel">
+  <div class="pt">Сарын зардлын дэлгэрэнгүй</div>
+  <div style="font-size:11px;color:#4a6070;margin-bottom:10px">Сарын 192 цагийн гүйцэтгэл</div>
+  <div id="sum-detail"></div>
+</div>
+ 
+<!-- Эцсийн дүн -->
+<div class="panel panel-full">
+  <div class="pt">Эцсийн дүн</div>
+  <div class="metrics" id="metrics"></div>
+  <div class="advice" id="advice"></div>
+</div>
+ 
+</div>
+ 
+<div class="footer">IHCM Mongolia · Дотоод хэрэгцээнд зориулсан тооцоолуур · НДШ: ХН-ийн яамны журам 2024 · ХХОАТ: Татварын хуулийн 23.1 зүйл · АБТ: Засгийн газрын тогтоол</div>
+ 
 <script>
-let worktype = 'normal';
-let inputMode = 'gross';
-
-function setWork(v, btn){
-  worktype = v;
-  document.querySelectorAll('.toggle-btn').forEach(b => {
-    if(b.onclick && b.onclick.toString().includes('setWork')) b.classList.remove('active');
-  });
-  btn.classList.add('active');
-  calc();
-}
-
-function setMode(v, btn){
-  inputMode = v;
-  document.querySelectorAll('.toggle-btn').forEach(b => {
-    if(b.onclick && b.onclick.toString().includes('setMode')) b.classList.remove('active');
-  });
-  btn.classList.add('active');
-  const label = document.querySelector('#usd').previousElementSibling;
-  document.getElementById('usd').placeholder = v === 'gross' ? 'USD (gross)' : 'USD (net)';
-  calc();
-}
-
-function toggleRateEdit(){
-  const row = document.getElementById('rate-edit-row');
-  row.style.display = row.style.display === 'none' ? 'block' : 'none';
-}
-
-function fmt(n){ return Math.round(n).toLocaleString('mn-MN') + '₮'; }
-function fmtU(n){ return '$' + n.toFixed(0); }
-
-const ND = {
-  pension:     { label:'Тэтгэврийн даатгал', empLocal:0.085, empFor:0.07, er:0.085 },
-  health:      { label:'Эрүүл мэндийн даатгал', empLocal:0.02, empFor:0.02, er:0.02 },
-  unemployment:{ label:'Ажилгүйдлийн даатгал', empLocal:0.005, empFor:0.005, er:0.005 },
-  maternity:   { label:'Жирэмсний даатгал', empLocal:0.01, empFor:0.01, er:0.01 },
-  injury:      { label:'Осол, мэргэжлийн өвчин', empLocal:0, empFor:0, erNormal:0.006, erHazard:0.012 }
+const ND={
+  pension:{label:'Тэтгэврийн даатгал',eFor:0.07,eLoc:0.085,er:0.085},
+  health:{label:'Эрүүл мэндийн даатгал',eFor:0.02,eLoc:0.02,er:0.02},
+  unemployment:{label:'Ажилгүйдлийн даатгал',eFor:0.005,eLoc:0.005,er:0.005},
+  maternity:{label:'Жирэмсний даатгал',eFor:0.01,eLoc:0.01,er:0.01},
+  injury:{label:'Осол мэргэжлийн',eFor:0,eLoc:0,erN:0.006,erH:0.012}
 };
-
+ 
+function f(n){return Math.round(n).toLocaleString('mn-MN')+'₮'}
+function fu(n){return '$'+parseFloat(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
+function toggleRate(){const r=document.getElementById('rate-row');r.style.display=r.style.display==='none'?'block':'none'}
+ 
 function calc(){
-  const usdVal = parseFloat(document.getElementById('usd').value) || 0;
-  const rate = parseFloat(document.getElementById('rate').value) || 3550;
-  const isFor = document.getElementById('emptype').value === 'foreign';
-
-  document.getElementById('rate-disp').textContent = rate.toLocaleString('mn-MN');
-
-  // Compute emp ND rate
-  let empNdRate = 0;
+  const usd=parseFloat(document.getElementById('usd').value)||0;
+  const rate=parseFloat(document.getElementById('rate').value)||3567;
+  const hc=parseInt(document.getElementById('headcount').value)||1;
+  const isFor=document.getElementById('emptype').value==='foreign';
+  const isHaz=document.getElementById('worktype').value==='hazard';
+  const months=parseInt(document.getElementById('contract').value)||24;
+  const svcUsd=parseFloat(document.getElementById('svc-usd').value)||0;
+ 
+  document.getElementById('rate-disp').textContent=rate.toLocaleString('mn-MN');
+  const gross=usd*rate;
+  document.getElementById('mnt-show').textContent=f(gross);
+ 
+  let empNdRate=0,erNdRate=0;
   for(const k in ND){
-    const r = ND[k];
-    empNdRate += isFor ? (r.empFor||0) : (r.empLocal||0);
+    const r=ND[k];
+    empNdRate+=isFor?(r.eFor||0):(r.eLoc||0);
+    erNdRate+=k==='injury'?(isHaz?r.erH:r.erN):(r.er||0);
   }
-  // Employer ND rate
-  let erNdRate = 0;
-  for(const k in ND){
-    const r = ND[k];
-    erNdRate += k === 'injury'
-      ? (worktype === 'hazard' ? r.erHazard : r.erNormal)
-      : (r.er||0);
-  }
-
-  const hotRate = 0.10;
-
-  let gross;
-  if(inputMode === 'gross'){
-    gross = usdVal * rate;
-  } else {
-    // net = gross * (1 - empNdRate) * (1 - hotRate) — solve for gross
-    // net = gross - empND - HOT
-    // HOT = (gross - empND) * 0.10
-    // net = gross - gross*empNdRate - (gross - gross*empNdRate)*0.10
-    // net = gross*(1 - empNdRate) * 0.90
-    const netMnt = usdVal * rate;
-    gross = netMnt / ((1 - empNdRate) * (1 - hotRate));
-  }
-
-  document.getElementById('mnt-show').textContent = fmt(gross) + (inputMode==='gross' ? '' : ' ← gross');
-
-  const empNd = gross * empNdRate;
-  const erNd  = gross * erNdRate;
-  const taxable = gross - empNd;
-  const hot = taxable * hotRate;
-  const net = gross - empNd - hot;
-  const erTotal = gross + erNd;
-
-  // ND table
-  let ndHtml = '';
-  for(const k in ND){
-    const r = ND[k];
-    const eRate = isFor ? (r.empFor||0) : (r.empLocal||0);
-    const erRate2 = k === 'injury' ? (worktype==='hazard' ? r.erHazard : r.erNormal) : (r.er||0);
-    if(eRate === 0 && erRate2 === 0) continue;
-    ndHtml += `<tr>
-      <td>${r.label}</td>
-      <td>${eRate > 0 ? fmt(gross * eRate) : '—'}</td>
-      <td>${erRate2 > 0 ? fmt(gross * erRate2) : '—'}</td>
-    </tr>`;
-  }
-  ndHtml += `<tr class="subtotal">
-    <td>Нийт НДШ</td>
-    <td>${fmt(empNd)}</td>
-    <td>${fmt(erNd)}</td>
-  </tr>`;
-  document.getElementById('nd-body').innerHTML = ndHtml;
-
-  // Metrics
-  document.getElementById('r-net').textContent = fmt(net);
-  document.getElementById('r-net-usd').textContent = fmtU(net/rate) + ' USD эквивалент';
-  document.getElementById('r-emp-total').textContent = fmt(empNd + hot);
-  document.getElementById('r-emp-pct').textContent = ((empNd+hot)/gross*100).toFixed(1) + '% суутгал';
-  document.getElementById('r-er-cost').textContent = fmt(erTotal);
-  document.getElementById('r-er-usd').textContent = fmtU(erTotal/rate) + ' USD зардал';
-
+  const empNd=gross*empNdRate;
+  const erNd=gross*erNdRate;
+  const taxable=gross-empNd;
+  const hhOat=taxable*0.10;
+  const net=gross-empNd-hhOat;
+  const erMonthly=gross+erNd;
+ 
+  // One-time
+  const svcMntPer=svcUsd*rate;
+  const totalUsd=svcUsd*hc;
+  const totalMnt=svcMntPer*hc;
+  document.getElementById('svc-mnt-val').textContent=f(svcMntPer*hc);
+  document.getElementById('onetime-usd-total').textContent=fu(totalUsd);
+  document.getElementById('onetime-mnt-total').textContent=f(totalMnt);
+ 
+  document.getElementById('pay-grid').innerHTML=`
+    <div class="pay-card"><div class="pay-lbl">1. Гэрээний урьдчилгаа (50%)</div><div class="pay-val">${f(totalMnt*0.5)}</div><div class="pay-sub">${fu(totalUsd*0.5)}</div></div>
+    <div class="pay-card"><div class="pay-lbl">2. Визны зөвшөөрөл гарах үед (50%)</div><div class="pay-val">${f(totalMnt*0.5)}</div><div class="pay-sub">${fu(totalUsd*0.5)}</div></div>`;
+ 
+  // ABT
+  const erTotalContract=erMonthly*hc*months;
+  const abtSaving=erTotalContract*0.5;
+  document.getElementById('abt-rows').innerHTML=`
+    <div class="abt-row"><span class="l">Сарын цалингийн зардал (${hc} ажилтан)</span><span style="color:#e8edf2">${f(erMonthly*hc)}</span></div>
+    <div class="abt-row"><span class="l">${months} сарын нийт цалингийн зардал</span><span style="color:#e8edf2">${f(erTotalContract)}</span></div>
+    <div class="abt-row"><span class="l">АБТ 50% хөнгөлөлт</span><span style="color:#4ecb8a">+ ${f(abtSaving)}</span></div>
+    <div class="abt-row"><span class="l">АБТ-тай нийт зардал (цалин+үйлчилгээ)</span><span style="color:#c8a94a">${f(erTotalContract-abtSaving+totalMnt)}</span></div>`;
+ 
   // Sum detail
-  document.getElementById('sum-detail').innerHTML = `
-    <div class="sum-row"><span class="lbl">Gross цалин</span><span class="val">${fmt(gross)}</span></div>
-    <div class="sum-row"><span class="lbl">Хасах: Ажилтны НДШ</span><span class="val" style="color:#e07070">- ${fmt(empNd)}</span></div>
-    <div class="sum-row"><span class="lbl">Хасах: ХОТ (10%)</span><span class="val" style="color:#e07070">- ${fmt(hot)}</span></div>
-    <div class="sum-row big"><span class="lbl">Гарт олгох цалин (net)</span><span class="val">${fmt(net)}</span></div>
-    <div class="sum-row" style="margin-top:12px"><span class="lbl">+ Ажил олгогчийн НДШ</span><span class="val" style="color:#c8a94a">+ ${fmt(erNd)}</span></div>
-    <div class="sum-row"><span class="lbl">Ажил олгогчийн нийт зардал</span><span class="val" style="color:#c8a94a">${fmt(erTotal)}</span></div>
-  `;
-
+  document.getElementById('sum-detail').innerHTML=`
+    <div class="sum-row"><span class="l">№1 · Гар дээр авах (NET)</span><span class="v" style="color:#4ecb8a">${f(net)}</span></div>
+    <div class="sum-row"><span class="l">№2 · Ажилтны НДШ (${(empNdRate*100).toFixed(1)}%)</span><span class="v">${f(empNd)}</span></div>
+    <div class="sum-row"><span class="l">№3 · Байгууллагын НДШ (${(erNdRate*100).toFixed(1)}%)</span><span class="v">${f(erNd)}</span></div>
+    <div class="sum-row"><span class="l">№4 · ХХОАТ (10%)</span><span class="v">${f(hhOat)}</span></div>
+    <div class="sum-row big"><span class="l">№5 · Байгууллагын нийт сарын зардал</span><span class="v">${f(erMonthly*hc)}</span></div>`;
+ 
+  // Metrics
+  document.getElementById('metrics').innerHTML=`
+    <div class="met"><div class="met-lbl">Гарт авах цалин (net)</div><div class="met-val g">${f(net)}</div><div class="met-sub">${fu(net/rate)}</div></div>
+    <div class="met"><div class="met-lbl">Байгууллагын сарын зардал</div><div class="met-val gold">${f(erMonthly*hc)}</div><div class="met-sub">${fu(erMonthly*hc/rate)}</div></div>
+    <div class="met"><div class="met-lbl">Нэг удаагийн үйлчилгээний хөлс</div><div class="met-val r">${f(totalMnt)}</div><div class="met-sub">${fu(totalUsd)}</div></div>`;
+ 
   // Advice
-  const surplus = erTotal - net;
-  const pct = (net / gross * 100).toFixed(0);
-  document.getElementById('advice-box').innerHTML = `
-    <strong>Ажил олгогчид зориулсан тайлбар</strong>
-    Та <b style="color:#e8edf2">${fmtU(usdVal)}</b> цалин тохирсон ч бодитоор ажилтан гарт авах нь <b style="color:#4ecb8a">${fmt(net)}</b> (${pct}%) болно.
-    Ажил олгогчийн жинхэнэ зардал нь цалинг оруулаад <b style="color:#c8a94a">${fmt(erTotal)}</b> байна — gross-оос <b style="color:#c8a94a">${((erNd/gross)*100).toFixed(1)}%</b> нэмэлт НДШ.
-    ${isFor ? '<br><span style="color:#7a8fa0; font-size:12px">* Гадаад иргэн: тэтгэврийн НДШ 7% (монгол иргэн 8.5%-иас бага)</span>' : ''}
-  `;
+  const company=document.getElementById('company').value||'Байгууллага';
+  document.getElementById('advice').innerHTML=`<strong>Ажил олгогчид тайлбарлах хэсэг</strong>
+    <b style="color:#e8edf2">${company}</b> байгууллага ${hc} гадаад ажилтан авбал сарын цалингийн нийт зардал <b style="color:#c8a94a">${f(erMonthly*hc)}</b> болно.
+    Ажилтан гарт <b style="color:#4ecb8a">${f(net)}</b> авна. IHCM-ийн нэг удаагийн үйлчилгээний хөлс <b style="color:#c8a94a">${f(totalMnt)}</b> — гэрээний урьдчилгаа 50% / визний дараа 50% хуваарьтай.
+    АБТ хөнгөлөлтөд хамрагдвал ${months} сарын хугацаанд нийт <b style="color:#4ecb8a">${f(abtSaving)}</b> хэмнэнэ.`;
 }
-
-document.getElementById('usd').addEventListener('input', calc);
-document.getElementById('rate').addEventListener('input', calc);
-document.getElementById('emptype').addEventListener('change', calc);
+ 
+document.getElementById('usd').addEventListener('input',calc);
+document.getElementById('rate').addEventListener('input',calc);
+document.getElementById('emptype').addEventListener('change',calc);
+document.getElementById('worktype').addEventListener('change',calc);
+document.getElementById('headcount').addEventListener('input',calc);
+document.getElementById('contract').addEventListener('change',calc);
+document.getElementById('svc-usd').addEventListener('input',calc);
 calc();
 </script>
 </body>
